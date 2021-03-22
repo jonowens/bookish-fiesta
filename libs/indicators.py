@@ -1,10 +1,13 @@
 # Library of indicator functions
 
+# Import necessary libraries
+import pandas as pd
+
 # Bollinger Band generator function
 def bollinger_band_generator(dataframe_name, closing_price_column_name = 'close', bollinger_band_window = 20, num_standard_deviation = 2):
-    """Creates Bollinger Band function
+    """Creates Bollinger Band values
     Args:
-        dataframe_name (dict): Single security dataframe containing at least closing prices
+        dataframe_name (df): Single security dataframe containing at least closing prices
         closing_price_column_name (str): Name of column in dataframe containing closing prices
         bollinger_band_window (int): Desired timeframe window used for rolling calculations
         num_standard_deviation (int): Desired number of standard deviations to calculate
@@ -30,6 +33,49 @@ def bollinger_band_generator(dataframe_name, closing_price_column_name = 'close'
     # Pop bb_std column
     dataframe_name.pop('bb_std')
 
-    # Return dataframe with features and target
+    # Return dataframe with features
     return dataframe_name
 
+# Average True Range generator function
+def average_true_range_generator(dataframe_name, span_timeframe = 20):
+    """Creates Average True Range values
+    Args:
+        dataframe_name (df): Single security dataframe containing 'open', 'high',
+        'low', and 'close' columns
+    Returns:
+        A dataframe of:
+            original data passed to function,
+            ATR_## (flt): Column of values to calculate Keltner Channels
+    """
+
+    # Instantiate variables
+    i = 0
+    true_range_list = []
+    
+    # Iterate through dataframe
+    while i < len(dataframe_name.index) - 1:
+
+        # Determine true range for one period
+        true_range = max(dataframe_name['high'][i + 1], dataframe_name['close'][i]) - min(dataframe_name['low'][i + 1], dataframe_name['close'][i])
+        
+        # Append true range value to list
+        true_range_list.append(true_range)
+
+        # Increment i
+        i = i + 1
+
+    # Change true range list into a series
+    true_range_series = pd.Series(true_range_list)
+
+    # Calculate average true range based on exponential weighted moving average
+    atr = pd.Series(pd.DataFrame.ewm(true_range_series, span= span_timeframe, min_periods= span_timeframe).mean(), name= 'atr_' + str(span_timeframe))
+
+    # Join the average true range to the passed dataframe
+    dataframe_name = dataframe_name.join(atr)
+
+    # Return dataframe with features
+    return dataframe_name
+
+# Keltner Channel generator function
+def keltner_channel_generator():
+    pass
