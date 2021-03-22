@@ -12,7 +12,6 @@ def bollinger_band_generator(dataframe_name, closing_price_column_name = 'close'
         A dataframe of:
             original data passed to function,
             bb_middle (flt): Column of values for middle band,
-            bb_std (flt): Column of values to calculate standard deviation,
             bb_upper (flt): Column of values for upper band,
             bb_lower (flt): Column of values for lower band,
     """
@@ -33,3 +32,4 @@ def bollinger_band_generator(dataframe_name, closing_price_column_name = 'close'
 
     # Return dataframe with features and target
     return dataframe_name
+
