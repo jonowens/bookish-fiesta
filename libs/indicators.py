@@ -51,27 +51,37 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
     # Instantiate variables
     i = 0
     true_range_list = []
-    
+
     # Iterate through dataframe
     while i < len(dataframe_name.index) - 1:
 
         # Determine true range for one period
         true_range = max(dataframe_name['high'][i + 1], dataframe_name['close'][i]) - min(dataframe_name['low'][i + 1], dataframe_name['close'][i])
-        
+
         # Append true range value to list
         true_range_list.append(true_range)
 
         # Increment i
         i = i + 1
 
-    # Change true range list into a series
-    true_range_series = pd.Series(true_range_list)
+    # Change true range list into dataframe
+    true_range_df = pd.DataFrame(true_range_list)
 
     # Calculate average true range based on exponential weighted moving average
-    atr = pd.Series(pd.DataFrame.ewm(true_range_series, span= span_timeframe, min_periods= span_timeframe).mean(), name= 'atr_' + str(span_timeframe))
+    atr = true_range_df[0].ewm(span=span_timeframe, min_periods=span_timeframe).mean()
 
+    # Change atr to dataframe and assign column name
+    atr_df = pd.DataFrame(atr)
+    atr_df.columns = ['atr']
+
+    # Reset the index of the passed dataframe
+    dataframe_name.reset_index(inplace=True)
+    
     # Join the average true range to the passed dataframe
-    dataframe_name = dataframe_name.join(atr)
+    dataframe_name = dataframe_name.join(atr_df)
+
+    # Set dataframe index
+    dataframe_name.set_index('time', inplace=True)
 
     # Return dataframe with features
     return dataframe_name
