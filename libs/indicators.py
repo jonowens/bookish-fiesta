@@ -4,11 +4,11 @@
 import pandas as pd
 
 # Bollinger Band generator function
-def bollinger_band_generator(dataframe_name, bollinger_band_window = 20, num_standard_deviation = 2):
+def bollinger_band_generator(dataframe_name, rolling_window = 20, num_standard_deviation = 2):
     """Creates Bollinger Band values
     Args:
         dataframe_name (df): Single security dataframe containing at least closing prices
-        bollinger_band_window (int): Desired timeframe window used for rolling calculations
+        rolling_window (int): Desired timeframe window used for rolling calculations
         num_standard_deviation (int): Desired number of standard deviations to calculate
     Returns:
         A dataframe of:
@@ -19,8 +19,8 @@ def bollinger_band_generator(dataframe_name, bollinger_band_window = 20, num_sta
     """
 
     # Calculate middle bollinger band, mean, and standard deviation
-    dataframe_name['bb_middle'] = dataframe_name['close'].rolling(window=bollinger_band_window).mean()
-    dataframe_name['bb_std'] = dataframe_name['close'].rolling(window=bollinger_band_window).std()
+    dataframe_name['bb_middle'] = dataframe_name['close'].rolling(window=rolling_window).mean()
+    dataframe_name['bb_std'] = dataframe_name['close'].rolling(window=rolling_window).std()
 
     # Calculate upper bollinger band and lower bollinger band
     dataframe_name['bb_upper'] = dataframe_name['bb_middle'] + (dataframe_name['bb_std'] * num_standard_deviation)
@@ -93,7 +93,7 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
     return dataframe_name
 
 # Keltner Channel generator function
-def keltner_channel_generator(dataframe_name, deviation = 2, span_timeframe = 20):
+def keltner_channel_generator(dataframe_name, span_timeframe = 20, deviation = 2):
     """Creates Keltner Channels with Average True Range values
     Args:
         dataframe_name (df): Single security dataframe containing 'open', 'high',
