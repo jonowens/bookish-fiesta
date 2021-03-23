@@ -4,11 +4,10 @@
 import pandas as pd
 
 # Bollinger Band generator function
-def bollinger_band_generator(dataframe_name, closing_price_column_name = 'close', bollinger_band_window = 20, num_standard_deviation = 2):
+def bollinger_band_generator(dataframe_name, bollinger_band_window = 20, num_standard_deviation = 2):
     """Creates Bollinger Band values
     Args:
         dataframe_name (df): Single security dataframe containing at least closing prices
-        closing_price_column_name (str): Name of column in dataframe containing closing prices
         bollinger_band_window (int): Desired timeframe window used for rolling calculations
         num_standard_deviation (int): Desired number of standard deviations to calculate
     Returns:
@@ -20,8 +19,8 @@ def bollinger_band_generator(dataframe_name, closing_price_column_name = 'close'
     """
 
     # Calculate middle bollinger band, mean, and standard deviation
-    dataframe_name['bb_middle'] = dataframe_name[closing_price_column_name].rolling(window=bollinger_band_window).mean()
-    dataframe_name['bb_std'] = dataframe_name[closing_price_column_name].rolling(window=bollinger_band_window).std()
+    dataframe_name['bb_middle'] = dataframe_name['close'].rolling(window=bollinger_band_window).mean()
+    dataframe_name['bb_std'] = dataframe_name['close'].rolling(window=bollinger_band_window).std()
 
     # Calculate upper bollinger band and lower bollinger band
     dataframe_name['bb_upper'] = dataframe_name['bb_middle'] + (dataframe_name['bb_std'] * num_standard_deviation)
@@ -91,12 +90,11 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
     return dataframe_name
 
 # Keltner Channel generator function
-def keltner_channel_generator(dataframe_name, closing_price_column_name = 'close', deviation = 2, span_timeframe = 20):
+def keltner_channel_generator(dataframe_name, deviation = 2, span_timeframe = 20):
     """Creates Keltner Channels with Average True Range values
     Args:
         dataframe_name (df): Single security dataframe containing 'open', 'high',
         'low', and 'close' columns
-        closing_price_column_name (str): Name of column in dataframe containing closing prices
         deviation (int): Number of deviations from keltner middle line
         span_timeframe (int): Desired timeframe window used for moving averages
     Returns:
@@ -109,16 +107,25 @@ def keltner_channel_generator(dataframe_name, closing_price_column_name = 'close
     """
 
     # Instantiate variables
-    
+    count = 0
+
+    # Generate average true range values
+    dataframe_name = average_true_range_generator(dataframe_name)
 
     # Calculate middle keltner channel
-    dataframe_name['kc_middle'] = dataframe_name[closing_price_column_name].ewm(span=span_timeframe, min_periods=span_timeframe).mean()
+    dataframe_name['kc_middle'] = dataframe_name['close'].ewm(span=span_timeframe, min_periods=span_timeframe).mean()
 
-    # Calculate upper keltner channel
-    dataframe_name['kc_upper'] = 0
-    
-    # Calculate lower keltner channel
-    dataframe_name['kc_lower'] = 0
+    # Loop through each line in dataframe to calculate upper and lower keltner channels
+    while count < len(dataframe_name.index):
+
+        # Calculate upper keltner channel
+        dataframe_name['kc_upper'] = 0
+        
+        # Calculate lower keltner channel
+        dataframe_name['kc_lower'] = 0
+
+        # Increment count
+        count += 1
 
     # Sort columns
     dataframe_name = dataframe_name[['open', 'high', 'low', 'close', 'volume', 'bb_upper', 'bb_middle', 'bb_lower', 'atr', 'kc_upper', 'kc_middle', 'kc_lower']]
