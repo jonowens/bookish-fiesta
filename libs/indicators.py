@@ -43,7 +43,7 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
     """Creates Average True Range values
     Args:
         dataframe_name (df): Single security dataframe containing 'open', 'high',
-        'low', and 'close' columns
+            'low', and 'close' columns
         span_timeframe (int): Desired timeframe window used for moving averages
     Returns:
         A dataframe of:
@@ -94,7 +94,7 @@ def keltner_channel_generator(dataframe_name, deviation = 2, span_timeframe = 20
     """Creates Keltner Channels with Average True Range values
     Args:
         dataframe_name (df): Single security dataframe containing 'open', 'high',
-        'low', and 'close' columns
+            'low', and 'close' columns
         deviation (int): Number of deviations from keltner middle line
         span_timeframe (int): Desired timeframe window used for moving averages
     Returns:
@@ -106,26 +106,17 @@ def keltner_channel_generator(dataframe_name, deviation = 2, span_timeframe = 20
             kc_lower (flt): Column of values for lower band
     """
 
-    # Instantiate variables
-    count = 0
-
     # Generate average true range values
     dataframe_name = average_true_range_generator(dataframe_name)
 
-    # Calculate middle keltner channel
+    # Calculate middle keltner channel (exponential weighted moving average)
     dataframe_name['kc_middle'] = dataframe_name['close'].ewm(span=span_timeframe, min_periods=span_timeframe).mean()
 
-    # Loop through each line in dataframe to calculate upper and lower keltner channels
-    while count < len(dataframe_name.index):
-
-        # Calculate upper keltner channel
-        dataframe_name['kc_upper'] = 0
-        
-        # Calculate lower keltner channel
-        dataframe_name['kc_lower'] = 0
-
-        # Increment count
-        count += 1
+    # Calculate upper keltner channel (EMA + (Deviation * Average True Range))
+    dataframe_name['kc_upper'] = (dataframe_name['kc_middle'] + (deviation * dataframe_name['atr']))
+            
+    # Calculate lower keltner channel (EMA - (Deviation * Average True Range))
+    dataframe_name['kc_lower'] = (dataframe_name['kc_middle'] - (deviation * dataframe_name['atr']))
 
     # Sort columns
     dataframe_name = dataframe_name[['open', 'high', 'low', 'close', 'volume', 'bb_upper', 'bb_middle', 'bb_lower', 'atr', 'kc_upper', 'kc_middle', 'kc_lower']]
