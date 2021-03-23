@@ -52,7 +52,9 @@ The purpose of this repo is to help others possibly find a new way to identify t
 
 ## Sources
 
-- [1] http://auto.tradingninja.com/how-to-calculate-average-true-range-keltner-channels/
+- [1] https://www.investopedia.com/terms/k/keltnerchannel.asp
+
+- [2] http://auto.tradingninja.com/how-to-calculate-average-true-range-keltner-channels/
 
 ---
 
