@@ -49,14 +49,14 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
     """
 
     # Instantiate variables
-    i = 0
+    i = 1
     true_range_list = []
 
     # Iterate through dataframe
-    while i < len(dataframe_name.index) - 1:
+    while i < len(dataframe_name.index):
 
         # Determine true range for one period
-        true_range = max(dataframe_name['high'][i + 1], dataframe_name['close'][i]) - min(dataframe_name['low'][i + 1], dataframe_name['close'][i])
+        true_range = max(dataframe_name['high'][i], dataframe_name['close'][i - 1]) - min(dataframe_name['low'][i], dataframe_name['close'][i - 1])
 
         # Append true range value to list
         true_range_list.append(true_range)
@@ -85,7 +85,3 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
 
     # Return dataframe with features
     return dataframe_name
-
-# Keltner Channel generator function
-def keltner_channel_generator():
-    pass
