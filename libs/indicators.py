@@ -27,7 +27,7 @@ def bollinger_band_generator(dataframe_name, bollinger_band_window = 20, num_sta
     dataframe_name['bb_lower'] = dataframe_name['bb_middle'] - (dataframe_name['bb_std'] * num_standard_deviation)
 
     # Drop NaN values
-    dataframe_name.dropna(inplace=True)
+    #dataframe_name.dropna(inplace=True)
 
     # Pop bb_std column
     dataframe_name.pop('bb_std')
@@ -71,7 +71,7 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
     true_range_df = pd.DataFrame(true_range_list)
 
     # Calculate average true range based on exponential weighted moving average
-    atr = true_range_df[0].ewm(span=span_timeframe, min_periods=span_timeframe).mean()
+    atr = pd.DataFrame(true_range_df[0].ewm(span=span_timeframe, min_periods=span_timeframe).mean())
 
     # Change atr to dataframe and assign column name
     atr_df = pd.DataFrame(atr)
@@ -85,6 +85,9 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
 
     # Set dataframe index
     dataframe_name.set_index('time', inplace=True)
+
+    # Drop NaN values
+    #dataframe_name.dropna(inplace=True)
 
     # Return dataframe with features
     return dataframe_name
