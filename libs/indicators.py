@@ -14,12 +14,12 @@ def bollinger_band_generator(dataframe_name, closing_price_column_name = 'close'
     Returns:
         A dataframe of:
             original data passed to function,
-            bb_middle (flt): Column of values for middle band,
             bb_upper (flt): Column of values for upper band,
-            bb_lower (flt): Column of values for lower band,
+            bb_middle (flt): Column of values for middle band,
+            bb_lower (flt): Column of values for lower band
     """
 
-    # Calculate mean and standard deviation
+    # Calculate middle bollinger band, mean, and standard deviation
     dataframe_name['bb_middle'] = dataframe_name[closing_price_column_name].rolling(window=bollinger_band_window).mean()
     dataframe_name['bb_std'] = dataframe_name[closing_price_column_name].rolling(window=bollinger_band_window).std()
 
@@ -33,6 +33,9 @@ def bollinger_band_generator(dataframe_name, closing_price_column_name = 'close'
     # Pop bb_std column
     dataframe_name.pop('bb_std')
 
+    # Sort columns
+    dataframe_name = dataframe_name[['open', 'high', 'low', 'close', 'volume', 'bb_upper', 'bb_middle', 'bb_lower']]
+
     # Return dataframe with features
     return dataframe_name
 
@@ -42,27 +45,28 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
     Args:
         dataframe_name (df): Single security dataframe containing 'open', 'high',
         'low', and 'close' columns
+        span_timeframe (int): Desired timeframe window used for moving averages
     Returns:
         A dataframe of:
             original data passed to function,
-            ATR_## (flt): Column of values to calculate Keltner Channels
+            atr (flt): Column of average true range values
     """
 
     # Instantiate variables
-    i = 1
+    count = 1
     true_range_list = []
 
     # Iterate through dataframe
-    while i < len(dataframe_name.index):
+    while count < len(dataframe_name.index):
 
         # Determine true range for one period
-        true_range = max(dataframe_name['high'][i], dataframe_name['close'][i - 1]) - min(dataframe_name['low'][i], dataframe_name['close'][i - 1])
+        true_range = max(dataframe_name['high'][count], dataframe_name['close'][count - 1]) - min(dataframe_name['low'][count], dataframe_name['close'][count - 1])
 
         # Append true range value to list
         true_range_list.append(true_range)
 
         # Increment i
-        i = i + 1
+        count += 1
 
     # Change true range list into dataframe
     true_range_df = pd.DataFrame(true_range_list)
@@ -82,6 +86,42 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
 
     # Set dataframe index
     dataframe_name.set_index('time', inplace=True)
+
+    # Return dataframe with features
+    return dataframe_name
+
+# Keltner Channel generator function
+def keltner_channel_generator(dataframe_name, closing_price_column_name = 'close', deviation = 2, span_timeframe = 20):
+    """Creates Keltner Channels with Average True Range values
+    Args:
+        dataframe_name (df): Single security dataframe containing 'open', 'high',
+        'low', and 'close' columns
+        closing_price_column_name (str): Name of column in dataframe containing closing prices
+        deviation (int): Number of deviations from keltner middle line
+        span_timeframe (int): Desired timeframe window used for moving averages
+    Returns:
+        A dataframe of:
+            original data passed to function,
+            atr (flt): Column of average true range values
+            kc_upper (flt): Column of values for upper band,
+            kc_middle (flt): Column of values for middle band,
+            kc_lower (flt): Column of values for lower band
+    """
+
+    # Instantiate variables
+    
+
+    # Calculate middle keltner channel
+    dataframe_name['kc_middle'] = dataframe_name[closing_price_column_name].ewm(span=span_timeframe, min_periods=span_timeframe).mean()
+
+    # Calculate upper keltner channel
+    dataframe_name['kc_upper'] = 0
+    
+    # Calculate lower keltner channel
+    dataframe_name['kc_lower'] = 0
+
+    # Sort columns
+    dataframe_name = dataframe_name[['open', 'high', 'low', 'close', 'volume', 'bb_upper', 'bb_middle', 'bb_lower', 'atr', 'kc_upper', 'kc_middle', 'kc_lower']]
 
     # Return dataframe with features
     return dataframe_name
