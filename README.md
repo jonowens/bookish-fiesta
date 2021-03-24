@@ -56,6 +56,8 @@ The purpose of this repo is to help others possibly find a new way to identify t
 
 - [2] http://auto.tradingninja.com/how-to-calculate-average-true-range-keltner-channels/
 
+- [3] https://www.youtube.com/watch?v=-o7ByZc0UN8
+
 ---
 
 ## Status
