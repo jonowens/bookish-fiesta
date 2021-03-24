@@ -126,3 +126,32 @@ def keltner_channel_generator(dataframe_name, span_timeframe = 20, deviation = 2
 
     # Return dataframe with features
     return dataframe_name
+
+# MACD generator function
+def MACD_generator(dataframe_name, fast = 12, slow = 26, signal_lag = 9):
+    """Creates MACD values
+    Args:
+        dataframe_name (df): Single security dataframe containing at least a 'close' column
+        fast (int): Desired timeframe window used for fast exponential moving averages
+        slow (int): Desired timeframe window used for slow exponential moving averages
+        signal_lag (int): Desired lag time used for macd rolling average
+    Returns:
+        A dataframe of:
+            original data passed to function,
+            macd_fast (flt): Column of values for fast average
+            macd_slow (flt): Column of values for slow average
+            macd (flt): Column of values for macd
+            macd_signal (flt): Column of signal values
+            macd_divergence (flt): Column of macd values minus the signal values
+    Tip:
+        fast = 5, slow = 35, signal_lag = 5 will provide greater sensitivity
+    """
+
+    # Calculate fast, slow, macd, signal and divergence values
+    dataframe_name['macd_fast'] = dataframe_name['close'].ewm(span=fast).mean()
+    dataframe_name['macd_slow'] = dataframe_name['close'].ewm(span=slow).mean()
+    dataframe_name['macd'] = dataframe_name['macd_slow'] - dataframe_name['macd_fast']
+    dataframe_name['macd_signal'] = dataframe_name['macd'].rolling(signal_lag).mean()
+    dataframe_name['macd_divergence'] = dataframe_name['macd'] - dataframe_name['macd_signal']
+
+    return dataframe_name
