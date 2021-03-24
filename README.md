@@ -21,7 +21,7 @@ The purpose of this repo is to help others possibly find a new way to identify t
 
 ## Technologies
 
-* Python 3.7.7
+* Python 3.7.10
 * See [requirements.txt](requirements.txt) for a list of libraries to create a virtual environment.
 
 ---
@@ -32,12 +32,12 @@ The purpose of this repo is to help others possibly find a new way to identify t
 2. Open Git Terminal
 3. Navigate into the repository file path where you stored the files during the download.
 4. The notebook file should be visible to run.
-5. Make sure to create a separate virtual environment for the libraries (alpacaenv).
+5. Make sure to create a separate virtual environment for the libraries (bookish_fiesta_env).
 6. Use [requirements.txt](requirements.txt) in the repository to install the libraries using the following commands:
 
     - conda deactivate
-    - conda create -n alpacaenv python=3.7.7
-    - conda activate alpacaenv
+    - conda create -n bookish_fiesta_env python=3.7.10
+    - conda activate bookish_fiesta_env
     - pip install -r requirements.txt
     - If the previous command has errors try:
         - conda install -r requirements.txt
