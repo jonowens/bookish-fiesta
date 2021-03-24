@@ -58,6 +58,7 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
     # Iterate through dataframe
     while count < len(dataframe_name.index):
 
+        # Find help from http://auto.tradingninja.com/how-to-calculate-average-true-range-keltner-channels/
         # Determine true range for one period
         true_range = max(dataframe_name['high'][count], dataframe_name['close'][count - 1]) - min(dataframe_name['low'][count], dataframe_name['close'][count - 1])
 
@@ -112,6 +113,7 @@ def keltner_channel_generator(dataframe_name, span_timeframe = 20, deviation = 2
     # Generate average true range values
     dataframe_name = average_true_range_generator(dataframe_name)
 
+    # Find help from https://www.investopedia.com/terms/k/keltnerchannel.asp
     # Calculate middle keltner channel (exponential weighted moving average)
     dataframe_name['kc_middle'] = dataframe_name['close'].ewm(span=span_timeframe, min_periods=span_timeframe).mean()
 
@@ -148,6 +150,7 @@ def MACD_generator(dataframe_name, fast = 12, slow = 26, signal_lag = 9):
     """
 
     # Calculate fast, slow, macd, signal and divergence values
+    # Thank you Camden Kirkland - https://www.youtube.com/watch?v=-o7ByZc0UN8
     dataframe_name['macd_fast'] = dataframe_name['close'].ewm(span=fast).mean()
     dataframe_name['macd_slow'] = dataframe_name['close'].ewm(span=slow).mean()
     dataframe_name['macd'] = dataframe_name['macd_slow'] - dataframe_name['macd_fast']
