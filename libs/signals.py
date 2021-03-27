@@ -43,3 +43,5 @@ def bbands_inside_kchannels(dataframe_name):
     
     # Return dataframe with features and target
     return dataframe_name
+
+# Exponential Weighted Moving Average signals (up and down)
