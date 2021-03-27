@@ -150,6 +150,6 @@ def macd_generator(dataframe_name, fast = 12, slow = 26):
     # Thank you Camden Kirkland - https://www.youtube.com/watch?v=-o7ByZc0UN8
     dataframe_name['macd_fast'] = dataframe_name['close'].ewm(span=fast).mean()
     dataframe_name['macd_slow'] = dataframe_name['close'].ewm(span=slow).mean()
-    dataframe_name['macd'] = dataframe_name['macd_slow'] - dataframe_name['macd_fast']
+    dataframe_name['macd'] = dataframe_name['macd_fast'] - dataframe_name['macd_slow']
 
     return dataframe_name
