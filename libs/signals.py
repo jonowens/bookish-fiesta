@@ -39,7 +39,7 @@ def bbands_inside_kchannels(dataframe_name):
     # Create signal for bollinger band is inside keltner channel
     selection = dataframe_name.loc[((dataframe_name['bb_upper'] < dataframe_name['kc_upper']) & (dataframe_name['bb_lower'] >= dataframe_name['kc_lower'])), :].index
     dataframe_name['squeeze'] = 0.0
-    dataframe_name['squeeze'][selection] = 1
-
+    dataframe_name.loc[selection, 'squeeze'] = 1.0
+    
     # Return dataframe with features and target
     return dataframe_name
