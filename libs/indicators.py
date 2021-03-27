@@ -130,8 +130,25 @@ def keltner_channel_generator(dataframe_name, span_timeframe = 20, deviation = 2
     return dataframe_name
 
 # MACD generator function
-def macd_generator(dataframe_name, fast = 12, slow = 26):
+def macd_generator(dataframe_name):
     """Creates MACD values
+    Args:
+        dataframe_name (df): Single security dataframe containing at least an 
+            'ewma_fast' column and an 'ewma_slow' column
+    Returns:
+        A dataframe of:
+            original data passed to function,
+            macd (flt): Column of values for macd
+    """
+
+    # Calculate macd values
+    dataframe_name['macd'] = dataframe_name['ewma_fast'] - dataframe_name['ewma_slow']
+
+    return dataframe_name
+
+# Exponential Weighted Moving Average (EWMA) generator function
+def ewma_generator(dataframe_name, fast = 12, slow = 26):
+    """Creates EWMA values
     Args:
         dataframe_name (df): Single security dataframe containing at least a 'close' column
         fast (int): Desired timeframe window used for fast exponential moving averages
@@ -139,17 +156,15 @@ def macd_generator(dataframe_name, fast = 12, slow = 26):
     Returns:
         A dataframe of:
             original data passed to function,
-            macd_fast (flt): Column of values for fast average
-            macd_slow (flt): Column of values for slow average
-            macd (flt): Column of values for macd
+            ewma_fast (flt): Column of values for fast average
+            ewma_slow (flt): Column of values for slow average
     Tip:
         fast = 5 and slow = 35 will provide greater sensitivity
     """
 
-    # Calculate fast, slow, macd, signal and divergence values
+    # Calculate fast and slow ewma
     # Thank you Camden Kirkland - https://www.youtube.com/watch?v=-o7ByZc0UN8
-    dataframe_name['macd_fast'] = dataframe_name['close'].ewm(span=fast).mean()
-    dataframe_name['macd_slow'] = dataframe_name['close'].ewm(span=slow).mean()
-    dataframe_name['macd'] = dataframe_name['macd_fast'] - dataframe_name['macd_slow']
+    dataframe_name['ewma_fast'] = dataframe_name['close'].ewm(span=fast).mean()
+    dataframe_name['ewma_slow'] = dataframe_name['close'].ewm(span=slow).mean()
 
     return dataframe_name
