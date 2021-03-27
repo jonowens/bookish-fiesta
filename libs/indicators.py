@@ -130,7 +130,7 @@ def keltner_channel_generator(dataframe_name, span_timeframe = 20, deviation = 2
     return dataframe_name
 
 # MACD generator function
-def MACD_generator(dataframe_name, fast = 12, slow = 26, signal_lag = 9):
+def macd_generator(dataframe_name, fast = 12, slow = 26, signal_lag = 9):
     """Creates MACD values
     Args:
         dataframe_name (df): Single security dataframe containing at least a 'close' column
