@@ -66,4 +66,10 @@ def ewma_crossovers(dataframe_name):
     dataframe_name['ewma_cross_down'] = 0.0
     dataframe_name.loc[time_crossed_down, 'ewma_cross_down'] = -1.0
 
+    # Create the crossover combined signal (cross up and down directions)
+    dataframe_name['ewma_crossover_signal'] = dataframe_name['ewma_cross_up'] + dataframe_name['ewma_cross_down']
+
+    # Drop cross up and down columns to clean up dataframe
+    dataframe_name.drop(columns=['ewma_cross_up', 'ewma_cross_down'], inplace=True)
+
     return dataframe_name
