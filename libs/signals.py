@@ -12,7 +12,7 @@ def macd(dataframe_name, signal_lag = 9):
     Returns:
         A dataframe of:
             original data passed to function,
-            macd_signal (flt): Column of signal values
+            macd_signal (flt): Column of signal values,
             macd_divergence (flt): Column of macd values minus the signal values
     Tip:
         signal_lag = 5 will provide greater sensitivity
@@ -33,15 +33,39 @@ def bbands_inside_kchannels(dataframe_name):
     Returns:
         A dataframe of:
             original data passed to function,
-            squeeze (flt): Signals (1.0 = True, 0.0 = False),
+            squeeze (flt): Signals column (1.0 = True, 0.0 = False)
     """
 
     # Create signal for bollinger band is inside keltner channel
     selection = dataframe_name.loc[((dataframe_name['bb_upper'] < dataframe_name['kc_upper']) & (dataframe_name['bb_lower'] >= dataframe_name['kc_lower'])), :].index
-    dataframe_name['squeeze'] = 0.0
+    dataframe_name['bbkc_squeeze'] = 0.0
     dataframe_name.loc[selection, 'squeeze'] = 1.0
     
     # Return dataframe with features and target
     return dataframe_name
 
 # Exponential Weighted Moving Average signals (up and down)
+def ewma_crossovers(dataframe_name):
+    """Creates up and down signals for exponential weighted moving averages
+    Args:
+        dataframe_name (df): Dataframe containing ewma fast and slow indicator data,
+    Returns:
+        A dataframe of:
+            original data passed to function,
+            cross_up (flt): Signals column (1.0 = True, 0.0 = False),
+            cross_down (flt): Signals column (-1.0 = True, 0.0 = False)
+    """
+
+    # Create signal for crossover band (cross in the up direction)
+    time_crossed_up = dataframe_name.loc[((dataframe_name['ewma_fast'] > dataframe_name['ewma_slow']) & (dataframe_name['ewma_fast'].shift(1) < dataframe_name['ewma_slow'].shift(1))), :].index
+    dataframe_name['cross_up'] = 0.0
+    #dataframe_name['cross_up'][time_crossed_up] = 1
+    dataframe_name.loc[time_crossed_up, 'cross_up'] = 1.0
+
+    # Create signal for crossover band (cross in the down direction)
+    time_crossed_down = dataframe_name.loc[((dataframe_name['ewma_fast'] < dataframe_name['ewma_slow']) & (dataframe_name['ewma_fast'].shift(1) > dataframe_name['ewma_slow'].shift(1))), :].index
+    dataframe_name['cross_down'] = 0.0
+    #dataframe_name['cross_down'][time_crossed_down] = -1
+    dataframe_name.loc[time_crossed_down, 'cross_down'] = -1.0
+
+    return dataframe_name
