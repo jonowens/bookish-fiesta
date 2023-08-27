@@ -83,13 +83,13 @@ def average_true_range_generator(dataframe_name, span_timeframe = 20):
     
     # Join the average true range to the passed dataframe
     dataframe_name = dataframe_name.join(atr_df)
-
+    
     # Set dataframe index
-    dataframe_name.set_index('time', inplace=True)
+    dataframe_name.set_index('timestamp', inplace=True)
 
     # Drop NaN values
     #dataframe_name.dropna(inplace=True)
-
+    
     # Return dataframe with features
     return dataframe_name
 
